@@ -3,23 +3,50 @@ from enum import Enum
 
 import httpx
 from fastapi import FastAPI, Request, APIRouter
+from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.endpoints.auth_router import auth_router
 
-host_ip = "192.168.98.198"
+host_ip = "192.168.151.238"
 auth_url = f"http://{host_ip}:8000/auth/login"
 
 logging.basicConfig()
+
+origins = [
+    "*",
+    "http://localhost:8080",
+    "http://192.168.0.108",
+    "http://100.94.251.56",
+    "http://192.168.7.44"
+]
+#
 
 
 
 app = FastAPI()
 
+origins = [
+    "*",
+    "http://localhost:8080",
+    "http://192.168.0.108",
+    "http://100.94.251.56",
+    "http://192.168.7.44"
+]
+#
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
+
+
 notification_router = APIRouter(prefix='/notification-api', tags=['notification'])
 document_processing_router = APIRouter(prefix='/document-processing-api', tags=['document'])
 text_correction_router = APIRouter(prefix='/text-correction-api', tags=['correction'])
-app.add_middleware(SessionMiddleware, secret_key='asas12334sadfdsf')
+#app.add_middleware(SessionMiddleware, secret_key='asas12334sadfdsf')
 app.include_router(auth_router)
 
 

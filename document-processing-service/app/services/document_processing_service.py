@@ -1,3 +1,4 @@
+import uuid
 from docxtpl import DocxTemplate
 import re
 import io
@@ -33,32 +34,44 @@ class DocumentService:
     def delete_document(self, id: int) -> None:
         self.document_repo.delete_document(id)
 
-    def generate_word_document_from_schema(self, id: int, minio_service: MinioFilesManagementService) -> str:
+    def generate_word_document_from_schema(self, id: int):
+        print("DOCUMENT AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
         document = self.document_repo.get_document(id)
         word_file = self.document_handler(document)
-        #minio_service.upload_file(word_file)
-        return "ok"
+
+        file_name = uuid.uuid4()
+
+        document.title = f"{file_name}.docx"
+        document.file_id = document.title
+
+        self.document_repo.update_document(document)
+
+        print("AFTER WORD FILEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
+        return word_file, document.title
 
 
-    @staticmethod
-    def document_handler(document: WordDocument):
-        #toDo: Добавить метод get_user_by_id. Получить имя/должность для author_id, responsible_employee_id
+
+    def document_handler(self, document: Document) -> bytes:
+        # toDo: Добавить метод get_user_by_id. Получить имя/должность для author_id, responsible_employee_id
         config = {
             'task_message': document.body
         }
 
+        print("1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
         doc_pattern = DocxTemplate("app/services/report_maket.docx")
 
         doc_pattern.render(config)
 
+        # Create an in-memory bytes buffer
         file_stream = io.BytesIO()
-        #toDo: После сохрания файла в хранилище добавлять в file_ids документа новосозданный файл
         doc_pattern.save(file_stream)
-        file_stream.seek(0)
+        file_stream.seek(0)  # Move to the beginning of the BytesIO buffer
 
-        return file_stream
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV", file_stream.getvalue())
+
+        return file_stream.getvalue()
 
 
-    # def generate_word_document_from_schema(self, document: Document) -> str:
-    #     #get_report_file(get_report_attributes("report_maket.docx"), data)
-    #     return WordDocument(f'{document.title}.docx')
+# def generate_word_document_from_schema(self, document: Document) -> str:
+#     #get_report_file(get_report_attributes("report_maket.docx"), data)
+#     return WordDocument(f'{document.title}.docx')

@@ -49,7 +49,7 @@ class DocumentRepository:
     def update_document(self, document: DocumentSchema) -> DocumentSchema:
         try:
             db_document = self.db.query(Document).filter(Document.id == document.id).first()
-            db_document.file_ids = document.file_ids
+            db_document.file_id = document.file_id
             db_document.title = document.title
             db_document.body = document.body
             db_document.author_id = document.author_id

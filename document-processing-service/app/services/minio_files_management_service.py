@@ -41,8 +41,8 @@ class MinioFilesManagementService:
     def upload_file(self, file_data: bytes, file_name: str) -> str:
         try:
             file_stream = io.BytesIO(file_data)
-            self.client.put_object(
-                self.bucket_name, file_name, file_stream, len(file_data)
+            minio_client.put_object(
+                bucket_name, file_name, file_stream, len(file_data)
             )
             return file_name
         except S3Error as e:
