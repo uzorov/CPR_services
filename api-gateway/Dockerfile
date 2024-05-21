@@ -1,7 +1,7 @@
 FROM python:3.10
 
 # Выбор папки, в которой будет вестись работа
-WORKDIR /api-gateway
+WORKDIR /gateway
 
 
 COPY ./api-gateway/requirements.txt /gateway/
