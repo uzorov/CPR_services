@@ -3,17 +3,15 @@ FROM python:3.10
 # Выбор папки, в которой будет вестись работа
 WORKDIR /file-processing-service
 
-COPY ./requirements.txt /file-processing-service/
+COPY document-processing-service/requirements.txt /file-processing-service/
 RUN pip install --no-cache-dir -r /file-processing-service/requirements.txt
 
-COPY ./.env /file-processing-service/.env
+COPY document-processing-service/.env /file-processing-service/.env
 
+COPY document-processing-service/app /file-processing-service/app
 
-
-COPY ./app /file-processing-service/app
-
-COPY ./app/alembic /file-processing-service/app/alembic
-COPY ./app/alembic.ini /file-processing-service/app/alembic.ini
+COPY document-processing-service/app/alembic /file-processing-service/app/alembic
+COPY document-processing-service/app/alembic.ini /file-processing-service/app/alembic.ini
 
 EXPOSE 82
 

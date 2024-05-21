@@ -1,18 +1,18 @@
-from fastapi import FastAPI, HTTPException, Depends, Request, Form, APIRouter
-from uuid import UUID
-from fastapi.responses import JSONResponse
-from starlette.middleware.sessions import SessionMiddleware
+import logging
+from enum import Enum
+
 import httpx
+from fastapi import FastAPI, Request, APIRouter
+from starlette.middleware.sessions import SessionMiddleware
 
 from app.endpoints.auth_router import auth_router
-from starlette.responses import RedirectResponse
-from enum import Enum
-import logging
 
 host_ip = "192.168.98.198"
 auth_url = f"http://{host_ip}:8000/auth/login"
 
 logging.basicConfig()
+
+
 
 app = FastAPI()
 

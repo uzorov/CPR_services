@@ -16,7 +16,6 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     full_name = Column(String)
-    employee_id = Column(String)
     department = Column(String)
     organization = Column(String)
     password = Column(String)

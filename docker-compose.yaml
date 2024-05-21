@@ -15,7 +15,7 @@ services:
   # notification-service:
   #   build:
   #     context: .
-  #     dockerfile: animal-publciation-service/Dockerfile
+  #     dockerfile: notification-service/NotificationService/Dockerfile
   #   ports:
   #     - "82:82"
     
@@ -23,34 +23,35 @@ services:
   # document-processing-service:
   #   build:
   #     context: .
-  #     dockerfile: animal-publciation-service/Dockerfile
+  #     dockerfile: document-processing-service/Dockerfile
   #   ports:
   #     - "83:83"
 
-  db:
-    image: postgres:16-alpine
-    container_name: postgres
-    environment:
-      POSTGRES_DB: filesdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: uzorov
-    ports:
-      - "5432:5432"
-
-  # minio:
-  #   image: minio/minio:latest
-  #   container_name: minio
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: postgres
   #   environment:
-  #     - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
-  #     - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-  #   command: server ~/minio --console-address :9090
+  #     POSTGRES_DB: filesdb
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: uzorov
   #   ports:
-  #     - '9090:9090'
-  #     - '9000:9000'
-  #   volumes:
-  #     - minio-data:/minio
+  #     - "5432:5432"
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+    command: server ~/minio --console-address :9090
+    ports:
+      - '9090:9090'
+      - '9000:9000'
+    volumes:
+      - minio-data:/minio
 
 
 
 volumes:
   postgres_data:
+  minio-data:

@@ -34,3 +34,4 @@ D:\CPR_services\notification-service\NotificationService\obj\Debug\net8.0\refint
 D:\CPR_services\notification-service\NotificationService\obj\Debug\net8.0\NotificationService.pdb
 D:\CPR_services\notification-service\NotificationService\obj\Debug\net8.0\NotificationService.genruntimeconfig.cache
 D:\CPR_services\notification-service\NotificationService\obj\Debug\net8.0\ref\NotificationService.dll
+D:\CPR_services\notification-service\NotificationService\obj\Debug\net8.0\NotificationService.sourcelink.json
