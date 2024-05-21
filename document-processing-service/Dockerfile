@@ -13,7 +13,7 @@ COPY document-processing-service/app /file-processing-service/app
 COPY document-processing-service/app/alembic /file-processing-service/app/alembic
 COPY document-processing-service/app/alembic.ini /file-processing-service/app/alembic.ini
 
-EXPOSE 82
+EXPOSE 83
 
 CMD ["/bin/sh", "-c", \
-    "uvicorn app.main:app --host 0.0.0.0 --port 82"]
+    "uvicorn app.main:app --host 0.0.0.0 --port 83"]

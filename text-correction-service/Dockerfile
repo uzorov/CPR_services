@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r /text-correction-service/requirements.txt
 
 COPY ./app /text-correction-service/app
 
-EXPOSE 85
+EXPOSE 81
 
 CMD ["/bin/sh", "-c", \
-    "uvicorn app.main:app --host 0.0.0.0 --port 85"]
+    "uvicorn app.main:app --host 0.0.0.0 --port 81"]

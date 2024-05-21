@@ -1,7 +1,6 @@
 from fastapi import Depends
 
 import re
-import pymorphy2
 from autocorrect import Speller
 from nltk.tokenize import word_tokenize, sent_tokenize
 
