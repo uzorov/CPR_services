@@ -27,10 +27,10 @@ def create_document(document_data: DocumentCreate, document_service: DocumentSer
     return new_document
 
 
-@document_router.put('/{document_id}')
-def update_document(document_id: int, document_data: DocumentUpdate, document_service: DocumentService = Depends()):
+@document_router.put('/')
+def update_document(document_data: DocumentUpdate, document_service: DocumentService = Depends()):
     try:
-        updated_document = document_service.update_document(document_id, document_data)
+        updated_document = document_service.update_document(document_data)
         return updated_document
     except KeyError:
         raise HTTPException(status_code=404, detail="Document not found")

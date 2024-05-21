@@ -28,8 +28,8 @@ class DocumentService:
     def create_document(self, document: Document) -> Document:
         return self.document_repo.create_document(document)
 
-    def update_document(self, id: int, document: Document) -> Document:
-        return self.document_repo.update_document(id, document)
+    def update_document(self, document: Document) -> Document:
+        return self.document_repo.update_document(document)
 
     def delete_document(self, id: int) -> None:
         self.document_repo.delete_document(id)
