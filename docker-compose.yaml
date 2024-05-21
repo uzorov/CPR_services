@@ -17,19 +17,19 @@ services:
   #     - "82:82"
     
     
-  # document-processing-service:
-  #   build:
-  #     context: .
-  #     dockerfile: document-processing-service/Dockerfile
-  #   ports:
-  #     - "83:83"
-
-  gateway:
+  document-processing-service:
     build:
       context: .
-      dockerfile: api-gateway/Dockerfile
+      dockerfile: document-processing-service/Dockerfile
     ports:
-      - "80:80"
+      - "83:83"
+
+  # gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: api-gateway/Dockerfile
+  #   ports:
+  #     - "80:80"
 
   # db:
   #   image: postgres:16-alpine

@@ -45,6 +45,18 @@ class DocumentRepository:
         except:
             traceback.print_exc()
             raise KeyError
+        
+    def delete_document(self, document_id: int) -> None:
+        try:
+            db_document = self.db.query(Document).filter(Document.id == document_id).first()
+            if db_document:
+                self.db.delete(db_document)
+                self.db.commit()
+            else:
+                raise KeyError(f"Document with id {document_id} not found")
+        except Exception as e:
+            logging.error(f"Error deleting document: {e}")
+            raise
     
     def update_document(self, document: DocumentSchema) -> DocumentSchema:
         try:

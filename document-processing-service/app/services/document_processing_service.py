@@ -5,7 +5,7 @@ import io
 from docx import Document as WordDocument
 import json
 from uuid import UUID
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Response
 from typing import List
 
 from app.repos.document_repo import DocumentRepository as DocumentRepo
@@ -33,6 +33,7 @@ class DocumentService:
 
     def delete_document(self, id: int) -> None:
         self.document_repo.delete_document(id)
+
 
     def generate_word_document_from_schema(self, id: int):
         print("DOCUMENT AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
