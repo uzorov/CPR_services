@@ -28,8 +28,8 @@ class DocumentService:
     def create_document(self, document: Document) -> Document:
         return self.document_repo.create_document(document)
 
-    def update_document(self, document: Document) -> Document:
-        return self.document_repo.update_document(document)
+    def update_document(self, id: int, document: Document) -> Document:
+        return self.document_repo.update_document(id, document)
 
     def delete_document(self, id: int) -> None:
         self.document_repo.delete_document(id)
@@ -40,12 +40,11 @@ class DocumentService:
         document = self.document_repo.get_document(id)
         word_file = self.document_handler(document)
 
-        file_name = uuid.uuid4()
+        file_id = uuid.uuid4()
 
-        document.title = f"{file_name}.docx"
-        document.file_id = document.title
+        document.file_id = f"{file_id}.docx"
 
-        self.document_repo.update_document(document)
+        self.document_repo.update_document(document.id, document)
 
         print("AFTER WORD FILEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
         return word_file, document.title

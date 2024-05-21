@@ -9,12 +9,13 @@ from app.schemas.document import Document as DocumentSchema
 
 logging.basicConfig()
 
+
 class DocumentRepository:
     db: Session
 
     def __init__(self) -> None:
         self.db = next(get_db())
-    
+
     def _map_to_model(self, document: Document) -> DocumentSchema:
         result = DocumentSchema.from_orm(document)
         return result
@@ -29,7 +30,7 @@ class DocumentRepository:
         for d in self.db.query(Document).all():
             documents.append(self._map_to_model(d))
         return documents
-    
+
     def get_document(self, id: int) -> DocumentSchema:
         document = self.db.query(Document).filter(Document.id == id).first()
         if document is None:
@@ -45,7 +46,7 @@ class DocumentRepository:
         except:
             traceback.print_exc()
             raise KeyError
-        
+
     def delete_document(self, document_id: int) -> None:
         try:
             db_document = self.db.query(Document).filter(Document.id == document_id).first()
@@ -57,10 +58,10 @@ class DocumentRepository:
         except Exception as e:
             logging.error(f"Error deleting document: {e}")
             raise
-    
-    def update_document(self, document: DocumentSchema) -> DocumentSchema:
+
+    def update_document(self, id: int, document: DocumentSchema) -> DocumentSchema:
         try:
-            db_document = self.db.query(Document).filter(Document.id == document.id).first()
+            db_document = self.db.query(Document).filter(Document.id == id).first()
             db_document.file_id = document.file_id
             db_document.title = document.title
             db_document.body = document.body
