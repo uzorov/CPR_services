@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.services.document_processing_service import DocumentService
+from app.services.minio_files_management_service import MinioFilesManagementService
 from app.schemas.document import DocumentCreate, DocumentUpdate, Document
 
 document_router = APIRouter(prefix='/documents-api', tags=['Documents'])
@@ -37,8 +38,9 @@ def delete_document(document_id: int, document_service: DocumentService = Depend
         raise HTTPException(status_code=404, detail="Document not found")
 
 @document_router.get('/{document_id}/generate-word-document')
-def generate_word_document(document_id: int, document_service: DocumentService = Depends()):
+def generate_word_document(document_id: int, document_service: DocumentService = Depends(),
+                           minio_service: MinioFilesManagementService = Depends()):
     try:
-        return document_service.generate_word_document_from_schema(document_id)
+        return document_service.generate_word_document_from_schema(document_id, minio_service)
     except KeyError:
         raise HTTPException(status_code=404, detail="Document not found")
