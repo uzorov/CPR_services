@@ -10,6 +10,7 @@ import os
 
 from starlette.middleware.cors import CORSMiddleware
 
+
 from app.endpoints.document_router import document_router
 from app.endpoints.minio_router import minio_router
 from app.settings import settings
