@@ -96,7 +96,7 @@
             const selectedModel = document.getElementById('modelSelect').value;
 
             try {
-                const response = await fetch(`http://176.123.163.239:81/corrections-api/${selectedModel}`, {
+                const response = await fetch(`http://localhost:81/corrections-api/${selectedModel}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
