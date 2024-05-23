@@ -1,13 +1,12 @@
 version: '3'
 
 services:
-  text-correction-service:
-    build:
-      context: .
-      dockerfile: text-correction-service/Dockerfile
-    ports:
-      - "81:81"
-
+  # text-correction-service:
+  #   build:
+  #     context: .
+  #     dockerfile: text-correction-service/Dockerfile
+  #   ports:
+  #     - "81:81"
 
   # notification-service:
   #   build:
@@ -31,30 +30,28 @@ services:
   #   ports:
   #     - "80:80"
 
-  # db:
-  #   image: postgres:16-alpine
-  #   container_name: postgres
-  #   environment:
-  #     POSTGRES_DB: filesdb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: uzorov
-  #   ports:
-  #     - "5432:5432"
+  db:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: filesdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: uzorov
+    ports:
+      - "5432:5432"
 
-  # minio:
-  #   image: minio/minio:latest
-  #   container_name: minio
-  #   environment:
-  #     - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
-  #     - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-  #   command: server ~/minio --console-address :9090
-  #   ports:
-  #     - '9090:9090'
-  #     - '9000:9000'
-  #   volumes:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+    command: server ~/minio --console-address :9090
+    ports:
+      - '9090:9090'
+      - '9000:9000'
+    volumes:
   #     - minio-data:/minio
-
-
 
 volumes:
   postgres_data:

@@ -1,6 +1,3 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using OutlookEmailService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +11,17 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 // Configure email settings from appsettings.json
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
+
 var app = builder.Build();
+
+app.MapGet("/", () => "Test");
+
+app.MapGet("/404", (HttpContext context) =>
+{
+    context.Response.StatusCode = 404;
+    return Task.CompletedTask;
+});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

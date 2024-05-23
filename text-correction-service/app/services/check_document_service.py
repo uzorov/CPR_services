@@ -16,9 +16,9 @@ model_fast = (T5ModelForSpellingCorruption
                             .sage_fredt5_distilled_95m
                             .value))
 
-# model_long = (RuM2M100ModelForSpellingCorrection.from_pretrained(
-#     AvailableCorrectors.sage_m2m100_1B.value
-# ))
+model_long = (RuM2M100ModelForSpellingCorrection.from_pretrained(
+    AvailableCorrectors.sage_m2m100_1B.value
+))
 
 
 class CheckDocumentService:
