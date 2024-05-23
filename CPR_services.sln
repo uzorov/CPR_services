@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notification-service", "notification-service", "{8BCA6B45-6A16-46DB-9913-7FD48CF07CE9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notification-service", "notification-service", "{65A55AEA-1DA9-4F16-81B5-0D63248D0684}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService", "notification-service\NotificationService\NotificationService.csproj", "{964FE8BC-FF30-4936-9660-48891EFDE520}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService", "notification-service\NotificationService\NotificationService.csproj", "{52081EE0-0D45-4AC4-91E3-F949123CF32B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,18 +13,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{964FE8BC-FF30-4936-9660-48891EFDE520}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{964FE8BC-FF30-4936-9660-48891EFDE520}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{964FE8BC-FF30-4936-9660-48891EFDE520}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{964FE8BC-FF30-4936-9660-48891EFDE520}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52081EE0-0D45-4AC4-91E3-F949123CF32B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52081EE0-0D45-4AC4-91E3-F949123CF32B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52081EE0-0D45-4AC4-91E3-F949123CF32B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52081EE0-0D45-4AC4-91E3-F949123CF32B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{964FE8BC-FF30-4936-9660-48891EFDE520} = {8BCA6B45-6A16-46DB-9913-7FD48CF07CE9}
+		{52081EE0-0D45-4AC4-91E3-F949123CF32B} = {65A55AEA-1DA9-4F16-81B5-0D63248D0684}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {47BE0EF9-74C0-4D13-8257-16245985DA56}
+		SolutionGuid = {2A82019A-DE14-4446-90EC-9F875F088CA4}
 	EndGlobalSection
 EndGlobal

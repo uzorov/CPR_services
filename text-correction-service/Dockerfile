@@ -3,10 +3,14 @@ FROM python:3.10
 # Выбор папки, в которой будет вестись работа
 WORKDIR /text-correction-service
 
-COPY ./requirements.txt /text-correction-service/
+COPY ./text-correction-service/requirements.txt /text-correction-service/
 RUN pip install --no-cache-dir -r /text-correction-service/requirements.txt
 
-COPY ./app /text-correction-service/app
+COPY ./text-correction-service/app /text-correction-service/app
+
+RUN cd /text-correction-service/app/sage && \
+    pip install . && \
+    pip install -e .[errant]
 
 EXPOSE 81
 

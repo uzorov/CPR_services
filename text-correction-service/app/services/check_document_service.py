@@ -2,6 +2,8 @@ from fastapi import Depends
 
 import re
 from autocorrect import Speller
+import nltk
+nltk.download('punkt')
 from nltk.tokenize import word_tokenize, sent_tokenize
 
 from app.sage.sage.spelling_correction import T5ModelForSpellingCorruption, RuM2M100ModelForSpellingCorrection, \
@@ -10,9 +12,9 @@ from app.sage.sage.spelling_correction import T5ModelForSpellingCorruption, RuM2
 spell = Speller(lang='ru', fast=True)
 
 model_fast = (T5ModelForSpellingCorruption
-              .from_pretrained(AvailableCorrectors
-                               .sage_fredt5_distilled_95m
-                               .value))
+                            .from_pretrained(AvailableCorrectors
+                            .sage_fredt5_distilled_95m
+                            .value))
 
 # model_long = (RuM2M100ModelForSpellingCorrection.from_pretrained(
 #     AvailableCorrectors.sage_m2m100_1B.value
