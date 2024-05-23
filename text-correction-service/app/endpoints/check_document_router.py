@@ -1,11 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
+from fastapi.staticfiles import StaticFiles
 
 from app.services.check_document_service import CheckDocumentService
 
 router = APIRouter(prefix="/corrections-api", tags=["Corrections"])
 
+router.mount("/", StaticFiles(directory="static"), name="static")
 
 class TextInput(BaseModel):
     model_config = ConfigDict(from_attributes=True)

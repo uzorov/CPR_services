@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервис исправления текста</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+        label {
+        
+            font-weight: bold;
+            padding: 8px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            max-width: 390px;
+            
+        }
+        select, button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        select {
+            width: 100%;
+        }
+        button {
+            width: 100%;
+        }
+        button:hover, select:hover {
+            background-color: #0056b3;
+        }
+        #result, #error {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Сервис исправления текста</h1>
+        <p>Введите текст, который Вы хотите исправить, и выберите модель.</p>
+        <form id="textCorrectionForm">
+            <label for="inputText">Введите текст для исправления:</label><br>
+            <textarea id="inputText" placeholder="Введите текст для исправления" rows="5" cols="50"></textarea><br>
+            <label for="modelSelect">Выберите модель:</label><br>
+            <select id="modelSelect">
+                <option value="correct-text-fast">Алгоритм без использования ИИ</option>
+                <option value="correct-text-ai-powered">Быстрая модель ИИ</option>
+                <option value="correct-text-long-ai-powered">Большая модель ИИ</option>
+            </select><br>
+            <button type="submit">Исправить текст</button>
+        </form>
+        <div id="result"></div>
+        <div id="error" style="color: red;"></div>
+    </div>
+
+    <script>
+        document.getElementById('textCorrectionForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const inputText = document.getElementById('inputText').value;
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            const selectedModel = document.getElementById('modelSelect').value;
+
+            try {
+                const response = await fetch(`http://176.123.163.239:81/corrections-api/${selectedModel}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: inputText })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка сети ' + response.statusText);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `<h3>Исправленный текст (${selectedModel}):</h3><p>${data}</p>`;
+                errorDiv.textContent = '';
+            } catch (error) {
+                console.error('Произошла ошибка!', error);
+                errorDiv.textContent = 'Произошла ошибка при исправлении текста.';
+                resultDiv.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>
