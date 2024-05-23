@@ -8,7 +8,8 @@ RUN pip install --no-cache-dir -r /text-correction-service/requirements.txt
 
 COPY ./text-correction-service/app /text-correction-service/app
 
-RUN cd /text-correction-service/app/sage && \
+RUN git clone https://github.com/ai-forever/sage.git /text-correction-service/app/sage && \
+    cd /text-correction-service/app/sage && \
     pip install . && \
     pip install -e .[errant]
 
