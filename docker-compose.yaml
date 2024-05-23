@@ -8,34 +8,34 @@ services:
     ports:
       - "81:81"
 
-  notification-service:
-    build:
-      context: .
-      dockerfile: notification-service/NotificationService/Dockerfile
-    ports:
-      - "82:82"
+  # notification-service:
+  #   build:
+  #     context: .
+  #     dockerfile: notification-service/NotificationService/Dockerfile
+  #   ports:
+  #     - "82:82"
     
     
-  document-processing-service:
-    build:
-      context: .
-      dockerfile: document-processing-service/Dockerfile
-    ports:
-      - "83:83"
+  # document-processing-service:
+  #   build:
+  #     context: .
+  #     dockerfile: document-processing-service/Dockerfile
+  #   ports:
+  #     - "83:83"
 
-  web-interface:
-    build:
-      context: .
-      dockerfile: UI/Dockerfile
-    ports:
-      - "8000:8000"
+  # web-interface:
+  #   build:
+  #     context: .
+  #     dockerfile: UI/Dockerfile
+  #   ports:
+  #     - "8000:8000"
 
-  gateway:
-    build:
-      context: .
-      dockerfile: api-gateway/Dockerfile
-    ports:
-      - "80:80"
+  # gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: api-gateway/Dockerfile
+  #   ports:
+  #     - "80:80"
 
   # db:
   #   image: postgres:16-alpine
