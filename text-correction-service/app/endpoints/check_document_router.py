@@ -7,8 +7,6 @@ from app.services.check_document_service import CheckDocumentService
 
 router = APIRouter(prefix="/corrections-api", tags=["Corrections"])
 
-router.mount("/", StaticFiles(directory="app/static"), name="static")
-
 class TextInput(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     text: str

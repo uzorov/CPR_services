@@ -11,6 +11,10 @@ const server = http.createServer((req, res) => {
     filePath = './index.html';
   }
 
+  if (filePath === './checker') {
+    filePath = './checker.html';
+  }
+
   const extname = path.extname(filePath);
   let contentType = 'text/html';
   switch (extname) {
