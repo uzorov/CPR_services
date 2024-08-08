@@ -3,7 +3,7 @@ FROM node:14
 WORKDIR /app
 
 # Копируем все файлы из директории ./UI/build внутрь контейнера
-COPY ./UI/build .
+COPY ./UI/dist .
 
 EXPOSE 8000
 

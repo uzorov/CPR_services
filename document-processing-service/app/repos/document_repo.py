@@ -7,15 +7,12 @@ from app.database import get_db
 from app.models.document import Document
 from app.schemas.document import Document as DocumentSchema
 
+from contextlib import contextmanager
+
+
 logging.basicConfig()
 
-
 class DocumentRepository:
-    db: Session
-
-    def __init__(self) -> None:
-        self.db = next(get_db())
-
     def _map_to_model(self, document: Document) -> DocumentSchema:
         result = DocumentSchema.from_orm(document)
         return result
@@ -26,50 +23,57 @@ class DocumentRepository:
         return result
 
     def get_documents(self) -> List[DocumentSchema]:
-        documents = []
-        for d in self.db.query(Document).all():
-            documents.append(self._map_to_model(d))
-        return documents
+        with get_db() as db:  # Используем контекстный менеджер
+            documents = []
+            for d in db.query(Document).all():
+                documents.append(self._map_to_model(d))
+            return documents
 
     def get_document(self, id: int) -> DocumentSchema:
-        document = self.db.query(Document).filter(Document.id == id).first()
-        if document is None:
-            raise KeyError
-        return self._map_to_model(document)
+        with get_db() as db:  # Используем контекстный менеджер
+            document = db.query(Document).filter(Document.id == id).first()
+            if document is None:
+                raise KeyError
+            return self._map_to_model(document)
 
     def create_document(self, document: DocumentSchema) -> DocumentSchema:
-        try:
-            db_document = self._map_to_schema(document)
-            self.db.add(db_document)
-            self.db.commit()
-            return self._map_to_model(db_document)
-        except:
-            traceback.print_exc()
-            raise KeyError
+        with get_db() as db:  # Используем контекстный менеджер
+            try:
+                db_document = self._map_to_schema(document)
+                db.add(db_document)
+                db.commit()
+                return self._map_to_model(db_document)
+            except:
+                traceback.print_exc()
+                raise KeyError
 
     def delete_document(self, document_id: int) -> None:
-        try:
-            db_document = self.db.query(Document).filter(Document.id == document_id).first()
-            if db_document:
-                self.db.delete(db_document)
-                self.db.commit()
-            else:
-                raise KeyError(f"Document with id {document_id} not found")
-        except Exception as e:
-            logging.error(f"Error deleting document: {e}")
-            raise
+        with get_db() as db:  # Используем контекстный менеджер
+            try:
+                db_document = db.query(Document).filter(Document.id == document_id).first()
+                if db_document:
+                    db.delete(db_document)
+                    db.commit()
+                else:
+                    raise KeyError(f"Document with id {document_id} not found")
+            except Exception as e:
+                logging.error(f"Error deleting document: {e}")
+                raise
 
     def update_document(self, id: int, document: DocumentSchema) -> DocumentSchema:
-        try:
-            db_document = self.db.query(Document).filter(Document.id == id).first()
-            db_document.file_id = document.file_id
-            db_document.title = document.title
-            db_document.body = document.body
-            db_document.author_id = document.author_id
-            db_document.responsible_employee_id = document.responsible_employee_id
-            db_document.created_at = document.created_at
-            self.db.commit()
-            return self.db.query(Document).filter(Document.id == document.id).first()
-        except:
-            traceback.print_exc()
-            raise KeyError
+        with get_db() as db:  # Используем контекстный менеджер
+            try:
+                db_document = db.query(Document).filter(Document.id == id).first()
+                db_document.file_id = document.file_id
+                db_document.subject = document.subject
+                db_document.description = document.description
+                db_document.status = document.status
+                db_document.priority = document.priority
+                db_document.author_id = document.author_id
+                db_document.responsible_employee_id = document.responsible_employee_id
+                db_document.registration_date = document.registration_date
+                db.commit()
+                return db.query(Document).filter(Document.id == id).first()
+            except:
+                traceback.print_exc()
+                raise KeyError

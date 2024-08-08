@@ -36,25 +36,32 @@ class DocumentService:
 
 
     def generate_word_document_from_schema(self, id: int):
-        print("DOCUMENT AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
         document = self.document_repo.get_document(id)
         word_file = self.document_handler(document)
 
         file_id = uuid.uuid4()
 
         document.file_id = f"{file_id}.docx"
-
+    
         self.document_repo.update_document(document.id, document)
+        return word_file, document.file_id
+    
+    def get_documents_by_responsible_employee(self, employee_id: UUID) -> List[Document]:
+        # Логика для получения документов по responsible_employee_id
+        documents = [doc for doc in self.get_documents() if doc.responsible_employee_id == employee_id]
+        return documents
 
-        print("AFTER WORD FILEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")
-        return word_file, document.title
+    def get_documents_by_author(self, author_id: UUID) -> List[Document]:
+        # Логика для получения документов по author_id
+        documents = [doc for doc in self.get_documents() if doc.author_id == author_id]
+        return documents
 
 
 
     def document_handler(self, document: Document) -> bytes:
         # toDo: Добавить метод get_user_by_id. Получить имя/должность для author_id, responsible_employee_id
         config = {
-            'task_message': document.body
+            'task_message': document.description
         }
 
         print("1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVV")

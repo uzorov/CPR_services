@@ -4,6 +4,7 @@ from urllib.parse import quote
 from app.services.document_processing_service import DocumentService
 from app.services.minio_files_management_service import MinioFilesManagementService
 from app.schemas.document import DocumentCreate, DocumentUpdate, Document
+from uuid import UUID
 
 document_router = APIRouter(prefix='/documents-api', tags=['Documents'])
 
@@ -80,3 +81,18 @@ def generate_word_document_post(document_data: DocumentCreate, document_service:
             })
     except KeyError:
         raise HTTPException(status_code=404, detail="Document not found")
+    
+    
+@document_router.get('/assigned-tasks/{client_id}')
+def get_assigned_tasks(client_id: UUID, document_service: DocumentService = Depends()):
+    documents = document_service.get_documents_by_responsible_employee(client_id)
+    if not documents:
+        documents = []
+    return documents
+
+@document_router.get('/created-tasks/{client_id}')
+def get_created_tasks(client_id: UUID, document_service: DocumentService = Depends()):
+    documents = document_service.get_documents_by_author(client_id)
+    if not documents:
+        documents = []
+    return documents

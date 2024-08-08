@@ -1,0 +1,8 @@
+fastapi 
+uvicorn 
+transformers 
+torch
+starlette
+torchaudio
+requests 
+python-multipart

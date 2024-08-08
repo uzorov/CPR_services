@@ -2,40 +2,31 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSON
-from uuid import UUID
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 from enum import Enum
-from app.models.base_model import Base
+from models.base_model import Base
 
+
+    # model_config = ConfigDict(from_attributes=True)
+    # id: int
+    # file_id: Optional[str]
+    # subject: str
+    # description: str
+    # status: str
+    # priority: str
+    # author_id: UUID
+    # responsible_employee_id: UUID
+    # registration_date: datetime
+    
 class Document(Base):
     __tablename__ = 'documents'
     id = Column(Integer, primary_key=True)
     file_id = Column(String)
-    title = Column(String)
-    body = Column(String)
-    author_id = Column(Integer, ForeignKey('users.id'))
-    author = relationship("User", foreign_keys=[author_id], backref="authored_documents")
-    responsible_employee_id = Column(Integer, ForeignKey('users.id'))
-    responsible_employee = relationship("User", foreign_keys=[responsible_employee_id], backref="responsible_documents")
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-class UserRole(Enum):
-    admin = "admin"
-    user = "user"
-
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    full_name = Column(String)
-    department = Column(String)
-    organization = Column(String)
-    password = Column(String)
-    role_id = Column(Integer, ForeignKey('roles.id'))
-    role = relationship("Role", back_populates="users")
-
-class Role(Base):
-    __tablename__ = 'roles'
-    id = Column(Integer, primary_key=True)
-    role_code = Column(String)
-    role_name = Column(String)
-    users = relationship("User", back_populates="role")
+    subject = Column(String)
+    description = Column(String)
+    status = Column(String)
+    priority = Column(String)
+    author_id = Column(UUID)
+    responsible_employee_id = Column(UUID)
+    registration_date = Column(DateTime, default=datetime.utcnow)

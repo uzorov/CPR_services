@@ -12,18 +12,17 @@
     - [Быстрое локальное развёртывание](#быстрое-локальное-развёртывание)
     - [Полное локальное развёртывание](#полное-локальное-развёртывание)
 4. [Конфигурация после развёртывания](#конфигурация-после-развёртывания)
-5. [Примечания](#примечания)
-6. [Контакты](#контакты)
+5. [Контакты](#контакты)
 
 ## Обзор
 Система CPR Services состоит из следующих компонентов:
-- **Сервис отправки уведомлений на почту**: отправляет уведомления по электронной почте через Outlook.
-- **Сервис проверки текстов**: использует ИИ для проверки и исправления текстов.
+- **Сервис работы с ИИ**: использует ИИ для проверки и исправления текстов, а также транскрибации аудио.
 - **Сервис работы с документами**: управляет операциями с документами.
 - **PostgreSQL**: база данных для хранения данных.
 - **MinIO**: система хранения файлов.
 - **API шлюз**: управляет API запросами и авторизацией.
-- **Пользовательский интерфейс**: веб-интерфейс и микрофронтенд для Сервиса проверки текстов.
+- **Keycloak**: авторизует пользователей и выдаёт роли
+- **Пользовательский интерфейс**: веб-интерфейс.
 
 ## Предварительные условия
 Перед началом развёртывания убедитесь, что на Вашей системе установлен Docker.
@@ -33,23 +32,7 @@
 ### Без локального развёртывания
 Используйте следующие ссылки для доступа к уже развёрнутой системе в облаке:
 
-- **Пользовательский интерфейс**: [http://176.123.163.239:8000/](http://176.123.163.239:8000/)
-- **Микрофронтенд сервиса проверки текстов**: [http://176.123.163.239:8000/checker](http://176.123.163.239:8000/checker)
-- **API шлюз**:
-  - Базовый URL: [http://176.123.163.239:80/](http://176.123.163.239:80/)
-  - API Swagger: [http://176.123.163.239:80/docs](http://176.123.163.239:80/docs)
-- **Сервис работы с документами**:
-  - Базовый URL: [http://176.123.163.239:83/](http://176.123.163.239:83/)
-  - API Swagger: [http://176.123.163.239:83/docs](http://176.123.163.239:83/docs)
-- **Сервис уведомлений**:
-  - Базовый URL: [http://176.123.163.239:82/](http://176.123.163.239:82/)
-- **Сервис проверки текста**:
-  - Базовый URL: [http://176.123.163.239:81/](http://176.123.163.239:81/)
-  - API Swagger: [http://176.123.163.239:81/](http://176.123.163.239:81/docs)
-- **Панель администратора MinIO**: [http://176.123.163.239:9090/](http://176.123.163.239:9090/)
-  - Логин: `minioadmin`
-  - Пароль: `minioadmin`
-- **PostgreSQL**: [http://176.123.163.239:5432/](http://176.123.163.239:5432/)
+- **Пользовательский интерфейс**: [https://cpr-ui.containers.cloud.ru](http://176.123.163.239:8000/)
 
 ### Быстрое локальное развёртывание
 Этот метод использует удалённые базы данных и файловое хранилище. Разворачиваются только сервисы.
@@ -60,54 +43,122 @@
    ```
 2. **Переход в директорию проекта**:
    ```bash
-   cd CPR_services
+   cd CPR_services/images
    ```
 3. **Запуск сборки и развёртывания**:
    ```bash
    docker compose up --build -d
    ```
 
-Время сборки зависит от скорости подключения к интернету и доступной памяти. Для успешной сборки на Windows на диске C: должно быть доступно не менее 10ГБ памяти.
-
-#### Ускорение процесса сборки
-Вы можете отключить загрузку большой модели искусственного интеллекта (около 5ГБ):
-1. Откройте файл `CPR_services/text-correction-service/app/services/check_document_service.py`.
-2. Закомментируйте следующие строки кода:
-   ```python
-   # model_long = (RuM2M100ModelForSpellingCorrection.from_pretrained(
-   #   AvailableCorrectors.sage_m2m100_1B.value
-   # ))
-   ```
+Время сборки зависит от скорости подключения к интернету и доступной памяти. Для успешной сборки на Windows на диске C: должно быть доступно не менее 15ГБ памяти.
 
 После завершения сборки система будет доступна по локальным ссылкам:
 - **Пользовательский интерфейс**: [http://localhost:8000/](http://localhost:8000/)
-- **Микрофронтенд сервиса проверки текстов**: [http://localhost:8000/checker](http://localhost:8000/checker)
 
 ### Полное локальное развёртывание
-Для полного локального развёртывания необходимо изменить файл `docker-compose.yaml`, раскомментировав следующие строки:
+Для полного локального развёртывания необходимо изменить файл `docker-compose.yaml`, раскомментировав все строки:
 ```yaml
-# db:
-#   image: postgres:16-alpine
-#   container_name: postgres
-#   environment:
-#     POSTGRES_DB: filesdb
-#     POSTGRES_USER: postgres
-#     POSTGRES_PASSWORD: uzorov
-#   ports:
-#     - "5432:5432"
+# version: '3'
 
-# minio:
-#   image: minio/minio:latest
-#   container_name: minio
-#   environment:
-#     - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
-#     - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-#   command: server ~/minio --console-address :9090
-#   ports:
-#     - '9090:9090'
-#     - '9000:9000'
-#   volumes:
-#     - minio-data:/minio
+# services:
+
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:23.0.1
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - KEYCLOAK_ADMIN=admin
+  #     - KEYCLOAK_ADMIN_PASSWORD=admin
+  #   command:
+  #     - "start-dev"
+
+  # ai-service:
+  #   build:
+  #     context: .
+  #     dockerfile: ai-service/Dockerfile
+  #   ports:
+  #     - "84:84"
+
+  # notification-service:
+  #   build:
+  #     context: .
+  #     dockerfile: notification-service/NotificationService/Dockerfile
+  #   ports:
+  #     - "82:82"
+    
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: postgres
+  #   environment:
+  #     POSTGRES_DB: filesdb
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: uzorov
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+  # document-processing-service:
+  #   build:
+  #     context: .
+  #     dockerfile: document-processing-service/Dockerfile
+  #   ports:
+  #     - "83:83"
+  #   environment:
+  #     POSTGRES_DB: filesdb
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: uzorov
+  #     POSTGRES_HOST: 87.242.86.68
+  #     POSTGRES_PORT: 5432
+    # depends_on:
+    #   - db
+
+
+  # web-interface:
+  #   build:
+  #     context: .
+  #     dockerfile: UI/Dockerfile
+  #   ports:
+  #     - "8000:8000"
+
+  # gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: api-gateway/Dockerfile
+  #   ports:
+  #     - "80:80"
+
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: postgres
+  #   environment:
+  #     POSTGRES_DB: filesdb
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: uzorov
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data  
+  #   entrypoint:
+  #     - /entrypoint.sh
+
+  # minio:
+  #   image: minio/minio:latest
+  #   container_name: minio
+  #   environment:
+  #     - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+  #     - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+  #   command: server ~/minio --console-address :9090
+  #   ports:
+  #     - '9090:9090'
+  #     - '9000:9000'
+  #   volumes:
+  #     - minio-data:/minio
+
+# volumes:
+#   postgres_data:
+  # minio-data:
+
 ```
 Для сервиса проверки текстов (document-processing-service) отредактируйте файл .env, подставив в переменные POSTGRES_URL и MINIO_URL ip адрес домашней машины. 
 Затем выполните команду для сборки и развёртывания:
@@ -137,15 +188,6 @@ docker compose up --build -d
    - В настройках bucket разрешите анонимный доступ.
 
 После выполнения этих шагов система будет полностью развёрнута и готова к работе.
-
-
-## Примечания
-Для работы сервиса уведомлений необходимы логин и пароль от учётной записи Outlook. Во избежание потери данных учётной записи, поля логин и пароль в Сервисе уведомлений отсутствуют. По этой причине письма не отправляются.
-
-При удалённом доступе к Системе возникнут трудности с использованием функции голосвого ввода - это происходит из-за того, что браузеры блокируют доступ к микрофону при незащищённом соединении (http). По этой причине для тестирования данной функции необходимо локальное развёртывание Cервиса.
-
-Микрофронтенд для Сервиса проверки текстов = это отдельное приложение, которое позволяет оценить все три подхода, реализованных в ходе разработки проекта, с удобным пользовательским интерфейсом (см. рисунок ниже).
-![image](https://github.com/uzorov/CPR_services/assets/90005421/a16c4343-86b1-41c7-a765-a2a0500bbc9d)
 
 
 ## Контакты
