@@ -78,7 +78,7 @@ export default {
     async downloadTask() {
       try {
         // Получаем файл с сервера как бинарный blob
-        const response = await axios.get(`http://87.242.86.68:83/documents-api/${this.task.id}/generate-word-document`, {
+        const response = await axios.get(`https://www.uzorovkirill.ru/documents-api/${this.task.id}/generate-word-document`, {
           responseType: 'blob', // Обработка данных как blob
         });
 
@@ -133,7 +133,7 @@ export default {
       try {
         const token = localStorage.getItem('access_token');
 
-        const url = `http://87.242.86.68:83/documents-api/${this.task.id}/`
+        const url = `https://www.uzorovkirill.ru/documents-api/${this.task.id}/`
         const requestData = {
           file_id: this.task.file_id || null, 
           subject: this.task.subject || '',

@@ -114,7 +114,7 @@ export default {
     async fetchUsers() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://87.242.86.68/auth/users', {
+        const response = await axios.get('https://www.uzorovkirill.ru/auth/users', {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.users = response.data;
@@ -127,7 +127,7 @@ export default {
     async fetchUserData() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await fetch('http://87.242.86.68/auth/user', {
+        const response = await fetch('https://www.uzorovkirill.ru/auth/user', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -145,10 +145,10 @@ export default {
         const userId = localStorage.getItem('user_id');
         const token = localStorage.getItem('access_token');
 
-        const assignedResponse = await axios.get(`http://87.242.86.68:83/documents-api/assigned-tasks/${userId}`, {
+        const assignedResponse = await axios.get(`https://www.uzorovkirill.ru/documents-api/assigned-tasks/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const createdResponse = await axios.get(`http://87.242.86.68:83/documents-api/created-tasks/${userId}`, {
+        const createdResponse = await axios.get(`https://www.uzorovkirill.ru/documents-api/created-tasks/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -196,7 +196,7 @@ export default {
     async deleteTask(task) {
       const token = localStorage.getItem('access_token');
       try {
-        await axios.delete(`http://87.242.86.68:83/documents-api/${task.id}`, {
+        await axios.delete(`https://www.uzorovkirill.ru/documents-api/${task.id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.createdTasks = this.createdTasks.filter(t => t.id !== task.id);

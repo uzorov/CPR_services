@@ -112,7 +112,7 @@ export default {
     async fetchUsers() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://87.242.86.68/auth/users', {
+        const response = await axios.get('https://www.uzorovkirill.ru/auth/users', {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.users = response.data;
@@ -129,8 +129,8 @@ export default {
       const token = localStorage.getItem('access_token');
       if (this.$refs.form.validate()) {
         const url = this.isEditMode
-          ? `http://87.242.86.68:83/documents-api/${this.taskData.id}/`
-          : 'http://87.242.86.68:83/documents-api/';
+          ? `https://www.uzorovkirill.ru/documents-api/${this.taskData.id}/`
+          : 'https://www.uzorovkirill.ru/documents-api/';
 
         const userId = localStorage.getItem('user_id');
         const requestData = {
@@ -181,7 +181,7 @@ export default {
 
           try {
             this.$notify({ group: 'foo', type: 'info', text: 'Транскрибация аудио началась' });
-            const response = await axios.post('http://87.242.86.68:84/transcribe-audio', formData, {
+            const response = await axios.post('https://www.uzorovkirill.ru/transcribe-audio/', formData, {
               headers: { 'Content-Type': 'multipart/form-data' }
             });
 
@@ -234,7 +234,7 @@ export default {
     },
     async fixTextErrors() {
       try {
-        const response = await axios.post('http://87.242.86.68:84/correct-text', {
+        const response = await axios.post('https://www.uzorovkirill.ru/correct-text/', {
           text: this.taskData.description
         });
 

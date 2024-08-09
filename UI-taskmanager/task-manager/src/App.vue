@@ -38,10 +38,12 @@ export default {
   methods: {
     async handleLoginSuccess(token) {
       try {
-        const response = await fetch('http://87.242.86.68/auth/user', {
+        console.log("token>>", token);
+        const response = await fetch('https://www.uzorovkirill.ru/auth/user', {
           headers: {
             Authorization: `Bearer ${token}`
-          }
+          },
+          mode: "cors"
         });
         const userData = await response.json();
         this.user = userData;
@@ -54,7 +56,7 @@ export default {
     async handleLogout() {
       const token = localStorage.getItem('access_token');
       try {
-        await fetch('http://87.242.86.68/auth/logout', {
+        await fetch('https://www.uzorovkirill.ru/auth/logout', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`

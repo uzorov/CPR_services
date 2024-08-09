@@ -40,7 +40,7 @@ export default {
     async login() {
       this.loading = true;
       try {
-        const response = await fetch('http://87.242.86.68/auth/login', {
+        const response = await fetch('https://www.uzorovkirill.ru/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -51,6 +51,8 @@ export default {
           })
         });
         const data = await response.json();
+
+        console.log("data", data);
 
         if (response.ok) {
           const token = data.access_token;

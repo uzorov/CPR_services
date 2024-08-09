@@ -1,6 +1,6 @@
-# version: '3'
+version: '3'
 
-# services:
+services:
 
   # keycloak:
   #   image: quay.io/keycloak/keycloak:23.0.1
@@ -54,19 +54,19 @@
     #   - db
 
 
-  # web-interface:
-  #   build:
-  #     context: .
-  #     dockerfile: UI/Dockerfile
-  #   ports:
-  #     - "8000:8000"
+  web-interface:
+    build:
+      context: .
+      dockerfile: UI/Dockerfile
+    ports:
+      - "8000:8000"
 
   # gateway:
   #   build:
   #     context: .
   #     dockerfile: api-gateway/Dockerfile
   #   ports:
-  #     - "80:80"
+  #     - "81:81"
 
   # db:
   #   image: postgres:16-alpine

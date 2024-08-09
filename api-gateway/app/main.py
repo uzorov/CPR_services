@@ -9,7 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.endpoints.auth_router import auth_router, require_role
 
 host_ip = "87.242.86.68"
-auth_url = f"http://{host_ip}:8000/auth/login"
+auth_url = f"http://{host_ip}:81/auth/login"
 
 logging.basicConfig()
 
