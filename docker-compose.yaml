@@ -51,7 +51,3 @@ services:
     image: cpr-web-ui.cr.cloud.ru/cpr-web-ui:latest
     ports:
       - "8000:8000"
-
-volumes:
-  postgres_data:
-  minio-data:

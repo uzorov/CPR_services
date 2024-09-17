@@ -62,3 +62,7 @@ services:
       - '9000:9000'
     volumes:
       - minio-data:/minio
+
+volumes:
+  postgres_data:
+  minio-data:
