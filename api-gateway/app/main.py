@@ -11,9 +11,6 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.endpoints.auth_router import auth_router, require_role
 
-host_ip = "87.242.86.68"
-auth_url = f"http://{host_ip}:81/auth/login"
-
 logging.basicConfig()
 
 
@@ -42,7 +39,6 @@ DOCUMENT_SERVICE_PORT = os.getenv('DOCUMENT_SERVICE_PORT', '83')
 TEXT_CORRECTION_SERVICE_PORT = os.getenv('TEXT_CORRECTION_SERVICE_PORT', '84')
 
 
-# notification_router = APIRouter(prefix='/notification-api', tags=['notification'])
 document_processing_router = APIRouter(prefix='/documents-api', tags=['document'])
 text_correction_router = APIRouter(prefix='', tags=['ai'])
 #app.add_middleware(SessionMiddleware, secret_key='asas12334sadfdsf')

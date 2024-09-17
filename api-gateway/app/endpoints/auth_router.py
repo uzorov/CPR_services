@@ -1,6 +1,7 @@
 from json import JSONDecodeError
 from fastapi import APIRouter, Depends, HTTPException, Request
 import httpx
+import os
 from starlette.responses import JSONResponse, RedirectResponse
 import logging
 import requests
@@ -8,20 +9,21 @@ from pydantic import BaseModel
 from typing import List
 
 
+KEYCLOAK_SERVER = os.getenv('KEYCLOAK_SERVER', 'http://127.0.0.1:8282')  
+KEYCLOAK_CLIENT_SECRET = os.getenv('KEYCLOAK_CLIENT_SECRET', '5e8qfIVapUsPqvmk42I7gfwohZTDZmrO') 
 
-host_ip = "87.242.86.68"
-keycloak_client_id = "cpr_client"
-keycloak_token_url = f"http://{host_ip}:8282/realms/master/protocol/openid-connect/token"
-keycloak_user_info_url = f"http://{host_ip}:8282/realms/master/protocol/openid-connect/userinfo"
-keycloak_client_secret = "5e8qfIVapUsPqvmk42I7gfwohZTDZmrO"
-keycloak_logout_uri = f"http://{host_ip}:8282/realms/master/protocol/openid-connect/logout"
+keycloak_client_id = os.getenv('KEYCLOAK_CLIENT_ID', 'cpr-client') 
+keycloak_token_url = f"{KEYCLOAK_SERVER}/realms/master/protocol/openid-connect/token"
+keycloak_user_info_url = f"{KEYCLOAK_SERVER}/realms/master/protocol/openid-connect/userinfo"
+keycloak_client_secret = KEYCLOAK_CLIENT_SECRET
+keycloak_logout_uri = f"{KEYCLOAK_SERVER }/realms/master/protocol/openid-connect/logout"
  
 
-client_id = "admin-cli"
-client_secret = "7ILwD8oKlOcRf0j6Bg4CJqtm4o6ksLEd"
-username = "admin"
-password = "eX4mP13p455w0Rd"
-server_url = f"http://{host_ip}:8282"
+client_id = keycloak_client_id = os.getenv('KEYCLOAK_ADMIN_ID', 'admin-cli') 
+client_secret = os.getenv('KEYCLOAK_ADMIN_SECRET', "7ILwD8oKlOcRf0j6Bg4CJqtm4o6ksLEd") 
+username = os.getenv('KEYCLOAK_ADMIN_USERNAME', 'admin') 
+password = os.getenv('KEYCLOAK_ADMIN_PASSWORD', 'eX4mP13p455w0Rd') 
+server_url = f"{KEYCLOAK_SERVER}"
 realm_name = "master"
 
 auth_router = APIRouter(prefix='/auth', tags=['auth'])

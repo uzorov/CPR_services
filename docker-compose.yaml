@@ -1,45 +1,48 @@
 services:
 
-  # ai-service:
-  #   build:
-  #     context: .
-  #     dockerfile: ai-service/Dockerfile
-  #   image: uzorovkirill/correct-text-ai:latest
-  #   ports:
-  #     - "84:84"
+  ai-service:
+    build:
+      context: .
+      dockerfile: ai-service/Dockerfile
+    image: uzorovkirill/correct-text-ai:latest
+    ports:
+      - "84:84"
 
-  # document-processing-service:
-  #   build:
-  #     context: .
-  #     dockerfile: document-processing-service/Dockerfile
-  #   image: uzorovkirill/document-processing-service:latest
-  #   ports:
-  #     - "83:83"
-  #   environment:
-  #     POSTGRES_DB: filesdb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: uzorov
-  #     POSTGRES_HOST: 87.242.86.68
-  #     POSTGRES_PORT: 5432
-  #     MINIO_HOST: 87.242.86.68:9000
-  #     HOST_IP: 192.168.0.11
+  document-processing-service:
+    build:
+      context: .
+      dockerfile: document-processing-service/Dockerfile
+    image: uzorovkirill/document-processing-service:latest
+    ports:
+      - "83:83"
+    environment:
+      POSTGRES_DB: filesdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: uzorov
+      POSTGRES_HOST: 87.242.86.68
+      POSTGRES_PORT: 5432
+      MINIO_HOST: 87.242.86.68:9000
+      MINIO_ACCESS_KEY: UsEr_y8b-DSq-C2K-t32
+      MINIO_SECRET_KEY: y8b-DSq-C2K-t32
+      HOST_IP: 192.168.0.11
 
-  # gateway:
-  #   build:
-  #     context: .
-  #     dockerfile: api-gateway/Dockerfile
-  #   image: uzorovkirill/api-gateway:latest
-  #   environment:
-  #     - HOST_IP=192.168.0.11  
-  #     - DOCUMENT_SERVICE_PORT=83
-  #     - TEXT_CORRECTION_SERVICE_PORT=84
-  #   ports:
-  #     - "81:81"
-  #   depends_on:
-  #     - document-processing-service
-  #     - ai-service
 
- web-interface:
+  gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    image: uzorovkirill/api-gateway:latest
+    environment:
+      - HOST_IP=192.168.0.11  
+      - DOCUMENT_SERVICE_PORT=83
+      - TEXT_CORRECTION_SERVICE_PORT=84
+    ports:
+      - "81:81"
+    depends_on:
+      - document-processing-service
+      - ai-service
+
+  web-interface:
     build:
       context: .
       dockerfile: UI/Dockerfile
@@ -49,53 +52,6 @@ services:
     ports:
       - "8000:8000"
 
-
-
-  # db:
-  #   image: postgres:16-alpine
-  #   container_name: postgres
-  #   environment:
-  #     POSTGRES_DB: filesdb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: uzorov
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data  
-  #   entrypoint:
-  #     - /entrypoint.sh
-
-  # minio:
-  #   image: minio/minio:latest
-  #   container_name: minio
-  #   environment:
-  #     - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
-  #     - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-  #   command: server ~/minio --console-address :9090
-  #   ports:
-  #     - '9090:9090'
-  #     - '9000:9000'
-  #   volumes:
-  #     - minio-data:/minio
-
- # notification-service:
-  #   build:
-  #     context: .
-  #     dockerfile: notification-service/NotificationService/Dockerfile
-  #   ports:
-  #     - "82:82"
-    
-  # db:
-  #   image: postgres:16-alpine
-  #   container_name: postgres
-  #   environment:
-  #     POSTGRES_DB: filesdb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: uzorov
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-# volumes:
-#   postgres_data:
-#   minio-data:
+volumes:
+  postgres_data:
+  minio-data:
