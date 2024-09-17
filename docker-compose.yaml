@@ -1,5 +1,20 @@
 services:
 
+  db:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: filesdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: uzorov
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  
+    entrypoint:
+      - /entrypoint.sh
+
+
   ai-service:
     build:
       context: .
@@ -19,12 +34,14 @@ services:
       POSTGRES_DB: filesdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: uzorov
-      POSTGRES_HOST: 87.242.86.68
+      POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
-      MINIO_HOST: 87.242.86.68:9000
+      MINIO_HOST: localhost:9000
       MINIO_ACCESS_KEY: UsEr_y8b-DSq-C2K-t32
       MINIO_SECRET_KEY: y8b-DSq-C2K-t32
-      HOST_IP: 192.168.0.11
+      HOST_IP: localhost
+    depends_on:
+      - db
 
 
   gateway:
@@ -33,7 +50,7 @@ services:
       dockerfile: api-gateway/Dockerfile
     image: uzorovkirill/api-gateway:latest
     environment:
-      - HOST_IP=192.168.0.11  
+      - HOST_IP=localhost
       - DOCUMENT_SERVICE_PORT=83
       - TEXT_CORRECTION_SERVICE_PORT=84
     ports:
@@ -47,7 +64,11 @@ services:
       context: .
       dockerfile: UI/Dockerfile
       args:
-        VUE_APP_GATEWAY_URL: https://www.uzorovkirill.ru
+        VUE_APP_GATEWAY_URL: http://localhost:81
     image: cpr-web-ui.cr.cloud.ru/cpr-web-ui:latest
     ports:
       - "8000:8000"
+    depends_on:
+      - ai-service
+      - document-processing-service
+      - gateway
