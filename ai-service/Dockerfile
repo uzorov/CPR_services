@@ -10,13 +10,13 @@ ENV TRANSFORMERS_CACHE=/app/cache
 ENV HF_HOME=/app/cache
 
 # Копируем файл зависимостей в контейнер
-COPY ./requirements.txt .
+COPY ./ai-service/requirements.txt .
 
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем исходный код приложения в контейнер
-COPY . .
+COPY ./ai-service/main.py .
 
 # Открываем порт, на котором будет работать приложение
 EXPOSE 84

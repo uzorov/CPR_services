@@ -3,14 +3,19 @@
     <v-card>
       <v-card-title>
         <span v-if="isEditMode">Редактировать поручение</span>
+        <span v-else-if="isReadonly">Просмотр поручения</span>
         <span v-else>Создать поручение</span>
       </v-card-title>
       <v-card-text>
         <v-form ref="form" v-model="valid">
-          <v-text-field v-model="taskData.subject" label="Тема"
-            :rules="[v => !!v || 'Тема обязательна']"></v-text-field>
+          <v-text-field 
+            v-model="taskData.subject" 
+            label="Тема"
+            :rules="[v => !!v || 'Тема обязательна']"
+            :readonly="isReadonly"
+            ></v-text-field>
           <v-textarea v-model="taskData.description" label="Текст документа" auto-grow :rows="10"
-            :rules="[v => !!v || 'Описание обязательно']"></v-textarea>
+            :rules="[v => !!v || 'Описание обязательно']" :readonly="isReadonly"></v-textarea>
           <v-row class="d-flex justify-end">
             <v-progress-linear v-if="isRecording" indeterminate color="primary" class="mt-2"></v-progress-linear>
 
@@ -18,35 +23,36 @@
               <v-card>
                 <v-card-text class="text-center">
                   <v-progress-circular indeterminate size="68" width="4" color="primary"></v-progress-circular>
-                  <div>Расшифровка голосового сообщения...</div>
+                  <div>{{ this.preloaderText }}</div>
                 </v-card-text>
               </v-card>
             </v-dialog>
 
 
-            <v-btn icon @click="startVoiceRecording">
-              <v-icon>mdi-microphone</v-icon>
+            <v-btn v-if="!isReadonly" icon @click="startVoiceRecording">
+              <v-icon v-if="!isRecording">mdi-microphone-outline</v-icon>
+              <v-icon v-else color="primary">mdi-microphone</v-icon>
             </v-btn>
-            <v-btn icon @click="fixTextErrors">
+            <v-btn v-if="!isReadonly" icon @click="fixTextErrors">
               <v-icon>mdi-text-box-edit-outline</v-icon>
-
             </v-btn>
           </v-row>
           <v-select v-model="taskData.status" :items="statuses" label="Статус"
-            :rules="[v => !!v || 'Статус обязателен']"></v-select>
-          <v-select v-model="taskData.priority" :items="priorities" label="Приоритет"></v-select>
+            :rules="[v => !!v || 'Статус обязателен']" :readonly="isReadonly"></v-select>
+
+          <v-select v-model="taskData.priority" :items="priorities" label="Приоритет" :readonly="isReadonly"></v-select>
+
           <v-text-field v-model="taskData.registration_date" label="Дата создания"
-            :rules="[v => !!v || 'Дата создания обязательна']" type="date"></v-text-field>
+            :rules="[v => !!v || 'Дата создания обязательна']" type="date" :readonly="isReadonly"></v-text-field>
 
           <v-select v-model="taskData.assignedTo" :items="users" item-text="name" item-value="id" label="Назначить на"
-            required></v-select>
-          <!-- Другие поля формы -->
+            required :readonly="isReadonly"></v-select>
         </v-form>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="close">Отмена</v-btn>
-        <v-btn color="blue darken-1" text @click="save">Сохранить</v-btn>
+        <v-btn v-if="!isReadonly" color="blue darken-1" text @click="save">Сохранить</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -59,6 +65,7 @@ import RecordRTC from 'recordrtc';
 export default {
   props: {
     isDialogOpen: Boolean,
+    isReadonly: Boolean,
     isEditMode: Boolean,
     task: Object
   },
@@ -76,18 +83,19 @@ export default {
         audioBlob: null
       },
       statuses: ['В обработке', 'Завершено', 'Отменено'],
-      priorities: ['Низкий', 'Важный', 'Очень важный', 'Бомба'],
+      priorities: ['Низкий', 'Средний', 'Важный', 'Очень важный', 'Бомба'],
       users: [],
       valid: true,
       isRecording: false,
-      isUploading: false
+      isUploading: false,
+      preloaderText: ''
     };
   },
   watch: {
     isDialogOpen(newVal) {
       this.localDialogOpen = newVal;
       if (!newVal) {
-        this.resetForm(); // Очистка формы при закрытии
+        if (!this.isEditMode && !this.isReadonly) this.resetForm(); // Очистка формы при закрытии
       }
     },
     task(newTask) {
@@ -112,25 +120,30 @@ export default {
     async fetchUsers() {
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get('https://www.uzorovkirill.ru/auth/users', {
+        const response = await axios.get(`${process.env.VUE_APP_GATEWAY_URL}/auth/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.users = response.data;
       } catch (error) {
         console.error('Ошибка при загрузке списка пользователей:', error);
       }
+      
     },
     close() {
       this.localDialogOpen = false;
       this.$emit('update:isDialogOpen', false);
-      this.resetForm();
+      if (!this.isEditMode && !this.isReadonly) this.resetForm();
     },
+
     async save() {
+      this.preloaderText = this.isEditMode ? 
+      "Сохранение изменений..." : "Сохранение данных..."
+      this.isUploading = true;
       const token = localStorage.getItem('access_token');
       if (this.$refs.form.validate()) {
         const url = this.isEditMode
-          ? `https://www.uzorovkirill.ru/documents-api/${this.taskData.id}/`
-          : 'https://www.uzorovkirill.ru/documents-api/';
+          ? `${process.env.VUE_APP_GATEWAY_URL}/documents-api/${this.taskData.id}`
+          : `${process.env.VUE_APP_GATEWAY_URL}/documents-api/`;
 
         const userId = localStorage.getItem('user_id');
         const requestData = {
@@ -144,9 +157,6 @@ export default {
           registration_date: this.taskData.registration_date || new Date().toISOString()
         };
 
-        console.log('Отправляемый объект:', requestData);
-        console.log('Отправляемый объект по адресу:', url);
-
         try {
           if (this.isEditMode) {
             await axios.put(url, requestData, {
@@ -159,20 +169,25 @@ export default {
           }
           this.taskData.responsible_employee_id = this.taskData.assignedTo;
           this.$emit('save-task', this.taskData);
-          this.$notify({ group: 'foo', type: 'info', text: 'Поручение обновлено' });
+          if (this.isEditMode) this.$notify({ group: 'foo', type: 'info', text: 'Поручение обновлено' });
+          else this.$notify({ group: 'foo', type: 'success', text: 'Поручение добавлено!' });
           this.close();
         } catch (error) {
           console.error('Ошибка при сохранении задачи:', error);
-          this.$notify({ group: 'foo', type: 'error', text: 'Ошибка при сохранении задачи!' });
+          this.$notify({ group: 'foo', type: 'error', text: 'Ошибка при сохранении поручения!' });
         }
+        finally {
+          this.isUploading = false;
+      }
       }
     },
     async startVoiceRecording() {
       if (this.isRecording) {
         this.recorder.stopRecording(async () => {
           this.audioBlob = this.recorder.getBlob();
-          console.log('Audio Blob создан:', this.audioBlob);
+          // console.log('Audio Blob создан:', this.audioBlob);
 
+          this.preloaderText = "Расшифровка голосового сообщения..."
           this.isRecording = false; // Скрыть индикатор записи
           this.isUploading = true; // Показать индикатор загрузки
 
@@ -180,9 +195,13 @@ export default {
           formData.append('file', this.audioBlob, 'audio.webm');
 
           try {
+            const token = localStorage.getItem('access_token');
             this.$notify({ group: 'foo', type: 'info', text: 'Транскрибация аудио началась' });
-            const response = await axios.post('https://www.uzorovkirill.ru/transcribe-audio/', formData, {
-              headers: { 'Content-Type': 'multipart/form-data' }
+            const response = await axios.post(`${process.env.VUE_APP_GATEWAY_URL}/transcribe-audio`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}` // Передача токена в заголовке
+              }
             });
 
             const transcription = response.data.transcription;
@@ -197,7 +216,7 @@ export default {
               this.taskData.description = this.taskData.description[0];
             }
             if (this.taskData.description == '') {
-              this.$notify({ group: 'foo', type: 'warning', text: 'Сервер перегружен... Повторите попытку' });
+              this.$notify({ group: 'foo', type: 'warning', text: 'Сервер перегружен или пустое сообщение... Повторите попытку' });
             }
             else {
               this.$notify({ group: 'foo', type: 'success', text: 'Текст успешно транскрибирован' });
@@ -217,15 +236,15 @@ export default {
             mimeType: 'audio/webm',
             recorderType: RecordRTC.MediaStreamRecorder,
             timeSlice: 1000,
-            ondataavailable: (blob) => {
-              console.log('Audio chunk received:', blob);
-            },
+            // ondataavailable: (blob) => {
+            //   console.log('Audio chunk received:', blob);
+            // },
           });
 
           this.recorder.startRecording();
           this.isRecording = true; // Показать индикатор записи
-          console.log('Запись началась');
-          this.$notify({ group: 'foo', type: 'info', text: 'Запись началась (Повторно нажмите для окончания)' });
+          // console.log('Запись началась');
+          this.$notify({ group: 'foo', type: 'info', text: 'Запись началась (Нажмите повторно для окончания)' });
         } catch (error) {
           console.error('Ошибка при доступе к микрофону:', error);
           this.$notify({ group: 'foo', type: 'error', text: 'Ошибка при доступе к микрофону' });
@@ -234,16 +253,26 @@ export default {
     },
     async fixTextErrors() {
       try {
-        const response = await axios.post('https://www.uzorovkirill.ru/correct-text/', {
+        
+        this.preloaderText = "Проверка текста..."
+        this.isUploading = true;
+        const token = localStorage.getItem('access_token');
+        const response = await axios.post(`${process.env.VUE_APP_GATEWAY_URL}/correct-text`, {
           text: this.taskData.description
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}` // Передача токена в заголовке
+          }
+
         });
 
         // Вставка исправленного текста в форму
         this.taskData.description = response.data.corrected_text[0];
-
+        this.isUploading = false;
         this.$notify({ group: 'foo', type: 'success', text: 'Текст успешно исправлен' });
       } catch (error) {
         console.error('Ошибка при исправлении текста:', error);
+        this.isUploading = false;
         this.$notify({ group: 'foo', type: 'error', text: 'Ошибка при исправлении текста' });
       }
     },

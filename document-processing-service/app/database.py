@@ -8,10 +8,10 @@ from contextlib import contextmanager
 engine = create_engine(
     settings.postgres_url,
     echo=True,
-    pool_size=20,        # Увеличьте размер пула
-    max_overflow=10,     # Максимальное количество дополнительных соединений
-    pool_timeout=30,     # Время ожидания свободного соединения
-    pool_recycle=3600    # Время в секундах до перераспределения соединения
+    pool_size=20,        
+    max_overflow=10,     
+    pool_timeout=30,    
+    pool_recycle=3600    
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

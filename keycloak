@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:16
+    restart: always
+    ports:
+      - '5433:5432'
+    volumes:
+      - /srv/keycloak/data/postgres16:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: ${POSTGRES_USER:-keycloak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eX4mP13p455w0Rd}
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.1
+    restart: on-failure:5
+    ports:
+      - '8282:8080'
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: 'jdbc:postgresql://87.242.86.68:5433/keycloak'
+      KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-eX4mP13p455w0Rd}
+      KC_DB_SCHEMA: public
+      KC_HOSTNAME: ${KC_HOSTNAME:-www.uzorovkirill.ru}
+      KC_HTTP_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-eX4mP13p455w0Rd}
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
+      KC_PROXY_HEADERS: xforwarded
+    command: start --verbose
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+    depends_on:
+      - postgres_db
+        # KC_PROXY_HEADERS: xforwarded
+      # command: start --optimized

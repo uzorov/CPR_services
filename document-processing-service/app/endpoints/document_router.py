@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import Request, APIRouter, Depends, HTTPException, Response
 from urllib.parse import quote
 
 from app.services.document_processing_service import DocumentService
@@ -47,10 +47,15 @@ def delete_document(document_id: int, document_service: DocumentService = Depend
 
 
 @document_router.get('/{document_id}/generate-word-document')
-def generate_word_document(document_id: int, document_service: DocumentService = Depends(),
+async def generate_word_document(document_id: int, request: Request, document_service: DocumentService = Depends(),
                            minio_service: MinioFilesManagementService = Depends()):
     try:
-        res = document_service.generate_word_document_from_schema(document_id)
+        
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            raise HTTPException(status_code=401, detail="Authorization header missing")
+        
+        res = await document_service.generate_word_document_from_schema(document_id, auth_header)
 
         minio_service.upload_file(res[0], f"{res[1]}")
 
@@ -65,11 +70,18 @@ def generate_word_document(document_id: int, document_service: DocumentService =
 
 
 @document_router.post('/generate-word-document')
-def generate_word_document_post(document_data: DocumentCreate, document_service: DocumentService = Depends(),
-                           minio_service: MinioFilesManagementService = Depends()):
+async def generate_word_document_post(document_data: DocumentCreate, request: Request, document_service: DocumentService = Depends(),
+                        minio_service: MinioFilesManagementService = Depends()):
     try:
+        # Извлекаем токен из заголовка Authorization
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            raise HTTPException(status_code=401, detail="Authorization header missing")
+        
+        # Вы можете использовать этот токен для выполнения действий, таких как вызов других сервисов
+        
         new_document = document_service.create_document(document_data)
-        res = document_service.generate_word_document_from_schema(new_document.id)
+        res = await document_service.generate_word_document_from_schema(new_document.id, auth_header)
 
         minio_service.upload_file(res[0], f"{res[1]}")
 

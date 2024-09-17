@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app>
       <v-toolbar-title>
-        <v-avatar>
+        <v-avatar class="ml-2 mr-1">
           <img src="https://nvpsy.ru/img/index/6.png" alt="Logo" />
         </v-avatar>
         Цифровой помощник руководителя
@@ -38,8 +38,8 @@ export default {
   methods: {
     async handleLoginSuccess(token) {
       try {
-        console.log("token>>", token);
-        const response = await fetch('https://www.uzorovkirill.ru/auth/user', {
+        // console.log("token>>", token);
+        const response = await fetch(`${process.env.VUE_APP_GATEWAY_URL}/auth/user`, {
           headers: {
             Authorization: `Bearer ${token}`
           },
@@ -56,8 +56,8 @@ export default {
     async handleLogout() {
       const token = localStorage.getItem('access_token');
       try {
-        await fetch('https://www.uzorovkirill.ru/auth/logout', {
-          method: 'POST',
+        await fetch(`${process.env.VUE_APP_GATEWAY_URL}/auth/logout`, {
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`
           }

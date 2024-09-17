@@ -1,18 +1,6 @@
 version: '3'
 
 services:
-  # db:
-  #   image: postgres:16-alpine
-  #   container_name: postgres
-  #   environment:
-  #     POSTGRES_DB: filesdb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: uzorov
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-
   document-processing-service:
     image: uzorovkirill/document-processing-service:latest
     ports:
@@ -23,24 +11,30 @@ services:
       POSTGRES_PASSWORD: uzorov
       POSTGRES_HOST: 87.242.86.68
       POSTGRES_PORT: 5432
-    # depends_on:
-    #   - db
-
-  api-gateway:
-    image: uzorovkirill/api-gateway:latest
-    ports:
-      - "80:80"
+      MINIO_HOST: 87.242.86.68:9000
+      HOST_IP: 87.242.86.68
 
   ai-services:
     image: uzorovkirill/correct-text-ai:latest
     ports:
       - "84:84"
 
-  web-ui:
-    image: cpr-ui.cr.cloud.ru/cpr-web-ui:latest
+  api-gateway:
+    image: uzorovkirill/api-gateway:latest
+    environment:
+      - HOST_IP=87.242.86.68 
+      - DOCUMENT_SERVICE_PORT=83
+      - TEXT_CORRECTION_SERVICE_PORT=84
     ports:
-      - "8000:8000"
+      - "81:81"
+    depends_on:
+      - api-gateway
+      - document-processing-service
 
+  # web-ui:
+  #   image: cpr-ui.cr.cloud.ru/cpr-web-ui:latest
+  #   ports:
+  #     - "8000:8000"
 
 # volumes:
 #   postgres_data:

@@ -36,11 +36,11 @@ export default {
       }
     };
   },
-  methods: {
+  methods: { 
     async login() {
       this.loading = true;
       try {
-        const response = await fetch('https://www.uzorovkirill.ru/auth/login', {
+        const response = await fetch(`${process.env.VUE_APP_GATEWAY_URL}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ export default {
         });
         const data = await response.json();
 
-        console.log("data", data);
+        // console.log("data", data);
 
         if (response.ok) {
           const token = data.access_token;

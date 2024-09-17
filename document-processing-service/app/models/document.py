@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSON
@@ -29,4 +29,4 @@ class Document(Base):
     priority = Column(String)
     author_id = Column(UUID)
     responsible_employee_id = Column(UUID)
-    registration_date = Column(DateTime, default=datetime.utcnow)
+    registration_date = Column(Date, default=datetime.utcnow().date)

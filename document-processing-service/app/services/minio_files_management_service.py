@@ -17,7 +17,7 @@ print(f"Is .env file present: {os.path.isfile(env_path)}")
 print(f"env_path: {env_path}")
 
 
-print("AAAAAAAAAAAAAAAAAAAA" + os.getenv("MINIO_URL"))
+# print("AAAAAAAAAAAAAAAAAAAA" + os.getenv("MINIO_URL"))
 
 minio_client = Minio(
     os.getenv("MINIO_URL"),

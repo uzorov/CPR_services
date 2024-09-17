@@ -1,14 +1,20 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn icon v-bind="attrs" v-on="on">
-        <div class="square-avatar">
-          <img
-            src="https://do.chel-meteor.ru/wp-content/uploads/2023/02/ab12618478634121072650b79952f9906de76c3cd450f49d27c4f101c41bf301.png?lm=1710867825"
-            alt="User Avatar"
-          />
-        </div>
-      </v-btn>
+    
+          <v-btn text rounded v-bind="attrs" v-on="on" class="pa-6">
+        <!-- Разметка для надписи -->
+          <div align="left">
+            <span class="font-weight-bold dark-grey--text">{{ user.name }}</span>
+            <br />
+            <span class="text-caption grey--text">{{ user.localized_role }}</span>
+          </div>
+  
+          <v-avatar size="40" class="ml-2">
+            <v-icon x-large color="dark-grey">mdi-account-tie</v-icon>
+          </v-avatar>
+        </v-btn>
+
     </template>
     <v-list>
       <v-list-item>
@@ -50,4 +56,6 @@ export default {
   height: 100%;
   object-fit: cover; 
 }
+
+
 </style>

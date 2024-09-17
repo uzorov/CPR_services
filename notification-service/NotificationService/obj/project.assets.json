@@ -546,11 +546,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
+      "projectUniqueName": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
       "projectName": "NotificationService",
-      "projectPath": "D:\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
+      "projectPath": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
       "packagesPath": "C:\\Users\\uzoro\\.nuget\\packages\\",
-      "outputPath": "D:\\CPR_services\\notification-service\\NotificationService\\obj\\",
+      "outputPath": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\uzoro\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -621,7 +621,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

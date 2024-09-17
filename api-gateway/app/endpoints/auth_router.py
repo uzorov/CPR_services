@@ -13,13 +13,14 @@ host_ip = "87.242.86.68"
 keycloak_client_id = "cpr_client"
 keycloak_token_url = f"http://{host_ip}:8282/realms/master/protocol/openid-connect/token"
 keycloak_user_info_url = f"http://{host_ip}:8282/realms/master/protocol/openid-connect/userinfo"
-keycloak_client_secret = "2Mu3KLVzBABbOgCjhCjd610O8c9d086y"
+keycloak_client_secret = "5e8qfIVapUsPqvmk42I7gfwohZTDZmrO"
 keycloak_logout_uri = f"http://{host_ip}:8282/realms/master/protocol/openid-connect/logout"
+ 
 
 client_id = "admin-cli"
-client_secret = "WP5gm4tVfw5mnPJCp52LS09PQR5ZSHHs"
+client_secret = "7ILwD8oKlOcRf0j6Bg4CJqtm4o6ksLEd"
 username = "admin"
-password = "admin"
+password = "eX4mP13p455w0Rd"
 server_url = f"http://{host_ip}:8282"
 realm_name = "master"
 
@@ -63,43 +64,58 @@ def get_user_role(token: str):
         response.raise_for_status()
         roles = response.json()
         logging.info("roles: %s", roles)
+        logging.warning("1 realm_access or roles not found in sub response")
 
         if "realm_access" in roles and "roles" in roles["realm_access"]:
+            logging.warning("2 realm_access or roles not found in sub response")
             if "supervisor" in roles["realm_access"]["roles"]:
-                user['role'] = "supervisor"
+                logging.warning("3 realm_access or roles not found in sub response")
+                user["role"] = "supervisor"
                 user["localized_role"] = "Руководитель"
             elif "employee" in roles["realm_access"]["roles"]:
-                user['role'] = "employee"
+                logging.warning("4 realm_access or roles not found in sub response")
+                user["role"] = "employee"
                 user["localized_role"] = "Специалист"
         else:
             logging.warning("realm_access or roles not found in token response")
 
         if "sub" in roles:
-            user['id'] = roles["sub"]
-        user['username'] = roles.get('preferred_username', 'unknown')
-        user['name'] = roles.get('name', 'unknown')
-        user['email'] = roles.get('email', 'unknown')
+            logging.warning("sub in roles")
+            user["id"] = roles.get("sub", "unknown")
+            logging.warning("sub in roles after id")
+            user["username"] = roles.get("preferred_username", "unknown")
+            logging.warning("sub in roles after username")
+            user["name"] = roles.get("name", "unknown")
+            logging.warning("sub in roles after name")
+            user['email'] = roles.get("email", "unknown")
+            logging.warning("sub in roles after email")
+        else:
+            logging.warning("realm_access or roles not found in sub response")
+        
+        logging.warning("final user:" + str(user))
         
         return user
     except httpx.HTTPStatusError as e:
         logging.error(f"HTTP error occurred: {e}")
         raise HTTPException(status_code=e.response.status_code, detail=e.response.json())
     except JSONDecodeError as e:
-        raise HTTPException(status_code=403, detail="Forbidden")
+        raise HTTPException(status_code=403, detail="Forbidden JSONDecodeError " + e)
     except Exception as e:
         logging.error(f"An error occurred: {e}")
-        raise HTTPException(status_code=403, detail="Forbidden")
+        raise HTTPException(status_code=403, detail="Forbidden " + e)
 
 
 def require_role(roles: List[str]):
-    logging.debug(f"Required roles: {roles}")
+    # logging.warning("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA require roles!!!!!!!!")
 
     def role_dependency(token: str = Depends(_get_token)):
         try:
             logging.debug(f"Token: {token}")
             user = get_user_role(token)
-            logging.debug(f"User: {user}")
+            logging.warning("after got user")
+            # logging.debug(f"User: {user}")
             if user['role'] not in roles:
+                logging.warning("thats worked (role in users)")
                 raise HTTPException(status_code=403, detail="Ошибка прав доступа")
             return user
         except JSONDecodeError as e:
@@ -143,7 +159,7 @@ async def logout(token: str = Depends(_get_token)):
         headers = {"Authorization": f"Bearer {token}"}
         response = httpx.get(keycloak_logout_uri, headers=headers)
         response.raise_for_status()
-        return RedirectResponse(url="/auth/login")
+        return 
     except httpx.HTTPStatusError as e:
         logging.error(f"HTTP error occurred: {e}")
         raise HTTPException(status_code=e.response.status_code, detail=e.response.json())
@@ -182,4 +198,31 @@ async def get_all_users(_user: dict = Depends(require_role(["employee", "supervi
         logging.error(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
+@auth_router.get("/user/{user_id}")
+async def get_user_by_id(user_id: str, _user: dict = Depends(require_role(["employee", "supervisor"]))):
+    try:
+        access_token = _get_access_token()
+        url = f"{server_url}/admin/realms/{realm_name}/users/{user_id}"
+        headers = {
+                'Authorization': f'Bearer {access_token}'
+            }
+            
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  
+            
+        user = response.json()
+        name = f"{user.get('lastName', '')} {user.get('firstName', '')}".strip()
+        user_data = {
+                "id": user["id"],
+                "name": name,
+            }
+        return JSONResponse(user_data)
+        
+    except requests.HTTPError as e:
+        logging.error(f"HTTP error occurred: {e}")
+        raise HTTPException(status_code=e.response.status_code, detail=e.response.json())
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+        
 

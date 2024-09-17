@@ -1,15 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
-from datetime import datetime
+from datetime import date
 from uuid import UUID
-
-
-        # assignedTo: null,
-        # subject: '',
-        # description: '',
-        # status: '',
-        # priority: '',
-        # registrationDate: ''
 
 class Document(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -21,7 +13,7 @@ class Document(BaseModel):
     priority: str
     author_id: UUID
     responsible_employee_id: UUID
-    registration_date: datetime
+    registration_date: date
     
 class DocumentCreate(BaseModel):
     file_id: Optional[str]
@@ -32,7 +24,7 @@ class DocumentCreate(BaseModel):
     priority: str
     author_id: UUID
     responsible_employee_id: UUID
-    registration_date: Optional[datetime] = None
+    registration_date: Optional[date] = None
 
 class DocumentUpdate(BaseModel):
     file_id: Optional[str]
@@ -42,5 +34,5 @@ class DocumentUpdate(BaseModel):
     priority: Optional[str]
     author_id: Optional[UUID]
     responsible_employee_id: Optional[UUID]
-    registration_date: Optional[datetime]
+    registration_date: Optional[date]
 
