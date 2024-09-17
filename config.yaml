@@ -12,6 +12,8 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: ${POSTGRES_USER:-keycloak}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eX4mP13p455w0Rd}
+    networks:
+      - cpr_network
 
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.1
@@ -20,7 +22,7 @@ services:
       - '8282:8080'
     environment:
       KC_DB: postgres
-      KC_DB_URL: 'jdbc:postgresql://localhost:5433/keycloak'
+      KC_DB_URL: 'jdbc:postgresql://keycloak_db:5433/keycloak'
       KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-eX4mP13p455w0Rd}
       KC_DB_SCHEMA: public
@@ -35,6 +37,8 @@ services:
       - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
     depends_on:
       - keycloak_db
+    networks:
+      - cpr_network
   
       
   minio:
@@ -49,7 +53,13 @@ services:
       - '9000:9000'
     volumes:
       - minio-data:/minio
+    networks:
+      - cpr_network
 
 volumes:
   postgres_data:
   minio-data:
+
+networks:
+  cpr_network:
+    driver: bridge
