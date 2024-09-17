@@ -28,7 +28,7 @@ services:
       KC_HTTP_ENABLED: true
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-eX4mP13p455w0Rd}
-      KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
+      # KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
       # KC_PROXY_HEADERS: xforwarded
     command: start --verbose --optimized
     volumes:
