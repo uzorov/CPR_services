@@ -5,7 +5,7 @@ services:
     image: postgres:16
     restart: always
     ports:
-      - '5433:5432'
+      - '5433:5433'
     volumes:
       - /srv/keycloak/data/postgres16:/var/lib/postgresql/data
     environment:
