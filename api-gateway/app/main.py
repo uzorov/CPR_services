@@ -34,9 +34,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-HOST_IP = os.getenv('HOST_IP', '127.0.0.1')  # Если не указано, используется '127.0.0.1'
-DOCUMENT_SERVICE_PORT = os.getenv('DOCUMENT_SERVICE_PORT', '83')
-TEXT_CORRECTION_SERVICE_PORT = os.getenv('TEXT_CORRECTION_SERVICE_PORT', '84')
+DOCUMENT_SERVICE_URL = os.getenv('DOCUMENT_SERVICE_URL', '127.0.0.1:83')
+TEXT_CORRECTION_SERVICE_URL = os.getenv('TEXT_CORRECTION_SERVICE_URL', '127.0.0.1:84')
 
 
 document_processing_router = APIRouter(prefix='/documents-api', tags=['document'])
@@ -45,8 +44,8 @@ text_correction_router = APIRouter(prefix='', tags=['ai'])
 app.include_router(auth_router)
 
 MICROSERVICES = {
-    "document-processing-service": f"http://{HOST_IP}:{DOCUMENT_SERVICE_PORT}/documents-api",
-    "text-correction-service": f"http://{HOST_IP}:{TEXT_CORRECTION_SERVICE_PORT}",
+    "document-processing-service": f"{DOCUMENT_SERVICE_URL}/documents-api",
+    "text-correction-service": f"{TEXT_CORRECTION_SERVICE_URL}",
 }
 
 

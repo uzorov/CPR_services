@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj": {}
+    "D:\\Developing\\Work\\Other\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj": {}
   },
   "projects": {
-    "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj": {
+    "D:\\Developing\\Work\\Other\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
+        "projectUniqueName": "D:\\Developing\\Work\\Other\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
         "projectName": "NotificationService",
-        "projectPath": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
+        "projectPath": "D:\\Developing\\Work\\Other\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
         "packagesPath": "C:\\Users\\uzoro\\.nuget\\packages\\",
-        "outputPath": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\obj\\",
+        "outputPath": "D:\\Developing\\Work\\Other\\CPR_services\\notification-service\\NotificationService\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\uzoro\\AppData\\Roaming\\NuGet\\NuGet.Config",

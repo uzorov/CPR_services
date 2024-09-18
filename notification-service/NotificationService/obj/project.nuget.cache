@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Redw5Do6ti4=",
+  "dgSpecHash": "YGfA4Np4UvI=",
   "success": true,
-  "projectFilePath": "D:\\Developing\\Work\\Горизонты\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
+  "projectFilePath": "D:\\Developing\\Work\\Other\\CPR_services\\notification-service\\NotificationService\\NotificationService.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\uzoro\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.3\\microsoft.aspnetcore.openapi.8.0.3.nupkg.sha512",
     "C:\\Users\\uzoro\\.nuget\\packages\\microsoft.exchange.webservices\\2.2.0\\microsoft.exchange.webservices.2.2.0.nupkg.sha512",

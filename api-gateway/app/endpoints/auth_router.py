@@ -10,25 +10,33 @@ from typing import List
 
 
 KEYCLOAK_SERVER = os.getenv('KEYCLOAK_SERVER', 'http://127.0.0.1:8282')  
-KEYCLOAK_CLIENT_SECRET = os.getenv('KEYCLOAK_CLIENT_SECRET', '5e8qfIVapUsPqvmk42I7gfwohZTDZmrO') 
+KEYCLOAK_CLIENT_SECRET = os.getenv('KEYCLOAK_CLIENT_SECRET', '5e8qfIVapUsPqvmk42I7gfwohZTDZmrO')
+REALM_NAME = os.getenv('REALM_NAME', "cpr") 
 
 keycloak_client_id = os.getenv('KEYCLOAK_CLIENT_ID', 'cpr-client') 
-keycloak_token_url = f"{KEYCLOAK_SERVER}/realms/master/protocol/openid-connect/token"
-keycloak_user_info_url = f"{KEYCLOAK_SERVER}/realms/master/protocol/openid-connect/userinfo"
+keycloak_token_url = f"{KEYCLOAK_SERVER}/realms/{REALM_NAME}/protocol/openid-connect/token"
+keycloak_user_info_url = f"{KEYCLOAK_SERVER}/realms/{REALM_NAME}/protocol/openid-connect/userinfo"
 keycloak_client_secret = KEYCLOAK_CLIENT_SECRET
-keycloak_logout_uri = f"{KEYCLOAK_SERVER }/realms/master/protocol/openid-connect/logout"
+keycloak_logout_uri = f"{KEYCLOAK_SERVER }/realms/{REALM_NAME}/protocol/openid-connect/logout"
  
 
-client_id = keycloak_client_id = os.getenv('KEYCLOAK_ADMIN_ID', 'admin-cli') 
+
+client_id  = os.getenv('KEYCLOAK_ADMIN_ID', 'admin-cli') 
 client_secret = os.getenv('KEYCLOAK_ADMIN_SECRET', "7ILwD8oKlOcRf0j6Bg4CJqtm4o6ksLEd") 
 username = os.getenv('KEYCLOAK_ADMIN_USERNAME', 'admin') 
-password = os.getenv('KEYCLOAK_ADMIN_PASSWORD', 'eX4mP13p455w0Rd') 
+password = os.getenv('KEYCLOAK_ADMIN_PASSWORD', 'admin') 
 server_url = f"{KEYCLOAK_SERVER}"
-realm_name = "master"
+realm_name = f"{REALM_NAME}"
+
+
+logging.basicConfig(level=logging.DEBUG)
+# logging.info("info started")
+# logging.info("client: ", keycloak_client_id)
+# logging.info("secret: ", keycloak_client_secret)
 
 auth_router = APIRouter(prefix='/auth', tags=['auth'])
 
-logging.basicConfig(level=logging.INFO)
+
 
 def _get_access_token():
     token_url = f"{server_url}/realms/{realm_name}/protocol/openid-connect/token"
@@ -133,6 +141,8 @@ class LoginRequest(BaseModel):
 
 @auth_router.post("/login")
 async def login(request: LoginRequest):
+    
+    logging.info("login...")
     username = request.username
     password = request.password
     data = {
@@ -143,6 +153,8 @@ async def login(request: LoginRequest):
         "password": password,
         "scope": "openid"
     }
+    # logging.info("login data", data)
+    # logging.info("login url", keycloak_token_url)
     try:
         response = httpx.post(keycloak_token_url, data=data)
         response.raise_for_status()

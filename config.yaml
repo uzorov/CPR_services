@@ -1,51 +1,65 @@
-version: '3.8'
-
 services:
-  keycloak_db:
-    image: postgres:16
-    restart: always
-    ports:
-      - '5433:5433'
-    volumes:
-      - /srv/keycloak/data/postgres16:/var/lib/postgresql/data
+
+  keycloak-postgres:
+    image: library/postgres:${KC_POSTGRES_IMAGE_TAG:-14}
+    container_name: ${POSTGRES_CONTAINER_NAME:-postgres}
+    restart: on-failure
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: ${POSTGRES_USER:-keycloak}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-eX4mP13p455w0Rd}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: pg_isready -d postgres
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    ports:
+      - ${KC_POSTGRES_PORT_MAPPING:-5433}:5432
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     networks:
       - cpr_network
 
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0.1
-    restart: on-failure:3
-    ports:
-      - '8282:8080'
-    environment:
-      KC_DB: postgres
-      KC_DB_URL: 'jdbc:postgresql://keycloak_db:5433/keycloak'
-      KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-eX4mP13p455w0Rd}
-      KC_DB_SCHEMA: public
-      KC_HOSTNAME: ${KC_HOSTNAME:-localhost}
-      KC_HTTP_ENABLED: true
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-eX4mP13p455w0Rd}
-      KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
-      # KC_PROXY_HEADERS: xforwarded
-    command: start --verbose --optimized
+    image: quay.io/keycloak/keycloak:20.0.2
+    container_name: keycloak
     volumes:
-      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - ./cpr-realm.json:/opt/keycloak/data/import/master-realm.json
+    command:
+      - start --import-realm --auto-build --db postgres --hostname-strict-https false --hostname-strict false --proxy edge --http-enabled true  --spi-user-profile-legacy-user-profile-read-only-attributes *_RES_ACCESS_MODE
+    environment:
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_SCHEMA: public
+      KC_FEATURES: preview
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 8282:8080
     depends_on:
-      - keycloak_db
+      keycloak-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:8080/realms/master"]
+      start_period: 10s
+      interval: 30s
+      retries: 3
+      timeout: 5s
     networks:
       - cpr_network
+
+
   
       
   minio:
     image: minio/minio:latest
     container_name: minio
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-UsEr_y8b-DSq-C2K-t32} $
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-UsEr_y8b-DSq-C2K-t32} 
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-y8b-DSq-C2K-t32}
     command: server ~/minio --console-address :9090
     ports:
@@ -57,7 +71,6 @@ services:
       - cpr_network
 
 volumes:
-  postgres_data:
   minio-data:
 
 networks:

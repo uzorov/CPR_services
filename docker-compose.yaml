@@ -2,7 +2,7 @@ services:
 
   db:
     image: postgres:16-alpine
-    container_name: postgres
+    container_name: cpr_postgres
     environment:
       POSTGRES_DB: filesdb
       POSTGRES_USER: postgres
@@ -11,8 +11,9 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data  
-    entrypoint:
-      - /entrypoint.sh
+    networks:
+      - config-services_cpr_network
+
 
 
   ai-service:
@@ -20,8 +21,11 @@ services:
       context: .
       dockerfile: ai-service/Dockerfile
     image: uzorovkirill/correct-text-ai:latest
+    container_name: ai-service
     ports:
       - "84:84"
+    networks:
+      - config-services_cpr_network
 
   document-processing-service:
     build:
@@ -30,31 +34,43 @@ services:
     image: uzorovkirill/document-processing-service:latest
     ports:
       - "83:83"
+    container_name: document-processing-service
     environment:
       POSTGRES_DB: filesdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: uzorov
-      POSTGRES_HOST: localhost
+      POSTGRES_HOST: cpr_postgres
       POSTGRES_PORT: 5432
       MINIO_HOST: localhost:9000
       MINIO_ACCESS_KEY: UsEr_y8b-DSq-C2K-t32
       MINIO_SECRET_KEY: y8b-DSq-C2K-t32
-      HOST_IP: localhost
+      HOST_IP: gateway
     depends_on:
       - db
-
+    networks:
+      - config-services_cpr_network
 
   gateway:
     build:
       context: .
       dockerfile: api-gateway/Dockerfile
+    container_name: gateway
     image: uzorovkirill/api-gateway:latest
     environment:
-      - HOST_IP=localhost
-      - DOCUMENT_SERVICE_PORT=83
-      - TEXT_CORRECTION_SERVICE_PORT=84
+      - DOCUMENT_SERVICE_URL=http://document-processing-service:83
+      - TEXT_CORRECTION_SERVICE_URL=http://ai-service:84
+      - KEYCLOAK_SERVER=http://keycloak:8080
+      - KEYCLOAK_CLIENT_ID=cpr-client
+      - KEYCLOAK_CLIENT_SECRET=AkrkYDRTC1vGkz26WSe903ZtXvYVElOr
+      - KEYCLOAK_ADMIN_ID=admin-cli
+      - KEYCLOAK_ADMIN_SECRET=37ibAQ3mKttdjE47SbQvoHlDa5fHRRgO
+      - KEYCLOAK_ADMIN_USERNAME=admin 
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - REALM_NAME=cpr
     ports:
       - "81:81"
+    networks:
+      - config-services_cpr_network
     depends_on:
       - document-processing-service
       - ai-service
@@ -66,9 +82,19 @@ services:
       args:
         VUE_APP_GATEWAY_URL: http://localhost:81
     image: cpr-web-ui.cr.cloud.ru/cpr-web-ui:latest
+    container_name: web-interface
     ports:
       - "8000:8000"
+    networks:
+      - config-services_cpr_network
     depends_on:
       - ai-service
       - document-processing-service
       - gateway
+
+volumes:
+  postgres_data:
+
+networks:
+  config-services_cpr_network:
+    external: true
